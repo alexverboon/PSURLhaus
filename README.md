@@ -5,7 +5,7 @@ Welcome to the URLhaus PowerShell Module
 This module provides you with easy-to-use cmdlets to make it easy to interface with the
 [URLhaus API](https://urlhaus-api.abuse.ch/) a project operated by abuse.ch with the purpose of collecting, tracking and sharing malware URLs to support security analysts to protect their network and customers from cyber threats.
 
-Please also reads the [Terms of Services](https://urlhaus-api.abuse.ch/#tos) published by URLhaus
+Please also read the [Terms of Services](https://urlhaus-api.abuse.ch/#tos) published by URLhaus
 
 Just in case you didn't read the TOS from URLhaus: URLhaus can not be held liable for any false positive or damage caused by the use of the website or the datasets offered throgh their API, the same applies for the creator of this powershell module
 
