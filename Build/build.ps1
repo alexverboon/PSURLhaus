@@ -1,5 +1,5 @@
 # ----------------------------------------------------------
-# Module Build Script
+# Module Build and publishing
 # v1.0, 22.03.2020
 # Alex Verboon
 # ----------------------------------------------------------
@@ -49,5 +49,10 @@ Publish-Module -Path "C:\dev\PSURLhaus\PSUrlhaus" -Repository "LocalPSRepository
 
 ## Install Module from local Repository
 Write-Host "Installing module " -ForegroundColor Green
-Find-module -Name "PSURLhaus" -Repository "LocalPSRepository" | Install-Module -Scope CurrentUser
+Find-module -Name "PSURLhaus" -Repository "LocalPSRepository" | Install-Module -Scope CurrentUser -Force
+
+Write-host  "Publishing Module into PSGallery" -ForegroundColor Green
+Publish-Module -Path "C:\dev\PSURLhaus\PSUrlhaus" -NuGetApiKey <my PSGallery API key> -Verbose 
+
+
 
