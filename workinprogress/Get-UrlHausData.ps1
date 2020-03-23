@@ -1,5 +1,4 @@
-﻿
-Function Get-UrlHausData{
+﻿Function Get-UrlHausData{
 <#
 .Synopsis
    Get-UrlHausData
@@ -29,6 +28,17 @@ Function Get-UrlHausData{
 
  Detailed information about the response data can be found here: https://urlhaus-api.abuse.ch/#payloads-recent
 
+.PARAMETER MD5
+ Use with parameter Payload. The MD5 hash of the payload (malware sample) you want to query URLhaus for
+
+ Detailed information about the response data can be found herE: https://urlhaus-api.abuse.ch/#payloadinfo
+
+.PARAMETER SHA256
+ Use with parameter Payload. The SHA256 hash of the payload (malware sample) you want to query URLhaus for
+
+ Detailed information about the response data can be found herE: https://urlhaus-api.abuse.ch/#payloadinfo
+ 
+
 .PARAMETER URLINFO 
  The URL to check against the URLhaus database. 
 
@@ -37,19 +47,36 @@ Function Get-UrlHausData{
  Detailed information about the response data can be found here: https://urlhaus-api.abuse.ch/#urlinfo
 
 
-.PARAMETER Host
+.PARAMETER Hostname
  The host (IPv4 address, hostname or domain name) to query aainst the URLhaus database
  
- Detailed information about the response data can be found here: https://urlhaus-api.abuse.ch/#hostinfo
+  Detailed information about the response data can be found here: https://urlhaus-api.abuse.ch/#hostinfo
+  
 
+.PARAMETER CacheMinutes
+ Use with parameter URL or Payload.  To prevent unecessary stress for the online URLhaus API, this parameter
+ defines the time previously retrieved data from the same API endpoint remains cached
+ utnil the data is fetched from the live API again. Th default is 15 minutes. If you do not wish to 
+ use the cache use th -NoCache option
 
+ Note: this current version will only use the cache when retrieving data from the same endpoint, when using another endpoint, the cache is deleted and the data
+ is fetched from th API again. Examples:
+
+  Get-URLhausdata -URL
+  Get-URLHausdata -URL (uses the cache)
+  Get-URLHausData -Payload
+  Get-URLhausdata -URL (the cache now contains the payload data, so URL data must be fetched online again)
+
+.PARAMETER NoCache
+ Use this switch to send every request to the online API, otherwise previously retrieved data within 
+ the current session is used for 15 minutes (default) or as long as specified by the CacheMinutes parameter. 
 
 
 .NOTES
     v1.0, 22.03.2020, Alex Verboon
 
 .EXAMPLE
-   Get-UrlHausData -URL
+    Get-UrlHausData -URL
 
     id                : 328248
     urlhaus_reference : https://urlhaus.abuse.ch/url/328248/
@@ -63,23 +90,11 @@ Function Get-UrlHausData{
     larted            : true
     tags              : {mirai}
 
-    id                : 328247
-    urlhaus_reference : https://urlhaus.abuse.ch/url/328247/
-    url               : http://142.93.202.20/911.ppc
-    url_status        : offline
-    host              : 142.93.202.20
-    date_added        : 2020-03-22 06:53:20 UTC
-    threat            : malware_download
-    blacklists        : @{spamhaus_dbl=not listed; surbl=not listed}
-    reporter          : c0deless
-    larted            : true
-    tags              : {mirai}
-
    Retrieves the most recent (1000) URL additions made to URLhaus
    
 
 .EXAMPLE
-   Get-UrlHausData -Payload 
+    Get-UrlHausData -Payload 
 
     md5_hash         : 508a488117f7379a06f4839c79078c31
     sha256_hash      : 5f31742eeb4a01b03f84741a768a2686e8f0cf7e12bbe8ecd4162eb59ba7d48c
@@ -94,26 +109,11 @@ Function Get-UrlHausData{
     ssdeep           : 768:N//BFx9FXAxDsK0wQUfcQ+gmBlqhSOVuxCWjsRAzRXz/tHd:Hj9xAOiVsgfwECH
     tlsh             : D303DB8626F3352AAD13B9FEBFFA2349B0719057C284CC5B7F9CA5459F492824813B5C
 
-    md5_hash         : 721810c91d94f3b3aac71e813e12776f
-    sha256_hash      : 68314aadbe959acdc4e0fa189134d510fffa0ae73b88e8085b1d9b09a10ce320
-    file_type        : unknown
-    file_size        : 36992
-    signature        : 
-    firstseen        : 2020-03-22 14:27:26
-    urlhaus_download : https://urlhaus-api.abuse.ch/v1/download/68314aadbe959acdc4e0fa189134d510fffa0ae73b88e80
-                       85b1d9b09a10ce320/
-    virustotal       : 
-    imphash          : 
-    ssdeep           : 768:X/BFx9FXzRZchvPCe6sOhSOVuxCWjsRAzRXz/tHd:Jj9xNuPSvwECH
-    tlsh             : 40F2C94A26B3312AAD17BDFEBFFB1305B175A047C284CC5B7F9CA549AF492814802B5C
-
-
-
    Retrieves the most recent (1000) Payload additions made to URLhaus
 
 .EXMAPLE
 
-  Get-UrlHausData -URLINFO "http://sskymedia.com/VMYB-ht_JAQo-gi/INV/99401FORPO/20673114777/US/Outstanding-Invoices/"
+    Get-UrlHausData -URLINFO "http://sskymedia.com/VMYB-ht_JAQo-gi/INV/99401FORPO/20673114777/US/Outstanding-Invoices/"
 
     query_status          : ok
     id                    : 105821
@@ -139,30 +139,89 @@ Function Get-UrlHausData{
                            ...}
 .EXAMPLE
 
- Get-URLhausData -HOST 
+ Get-UrlHausData -Hostname vektorex.com 
+
+    query_status      : ok
+    urlhaus_reference : https://urlhaus.abuse.ch/host/vektorex.com/
+    host              : vektorex.com
+    firstseen         : 2019-01-15 07:09:01 UTC
+    url_count         : 124
+    blacklists        : @{spamhaus_dbl=not listed; surbl=not listed}
+    urls              : {@{id=124617; urlhaus_reference=https://urlhaus.abuse.ch/url/124617/; 
+                        url=http://vektorex.com/jobs/cgi/86010322.jpg; url_status=offline; 
+                        date_added=2019-02-14 18:02:23 UTC; threat=malware_download; reporter=JayTHL; 
+                        larted=true; takedown_time_seconds=46393; tags=System.Object[]}, @{id=124195; 
+                        urlhaus_reference=https://urlhaus.abuse.ch/url/124195/; 
+                        url=http://vektorex.com/jobs/cgi/25061013.png; url_status=offline; 
+                        date_added=2019-02-14 06:39:08 UTC; threat=malware_download; reporter=abuse_ch; 
+                        larted=true; takedown_time_seconds=1681; tags=System.Object[]}, @{id=123432; 
+                        urlhaus_reference=https://urlhaus.abuse.ch/url/123432/; 
+                        url=http://vektorex.com/jobs/cgi/File_54115.png; url_status=offline; 
+                        date_added=2019-02-13 13:11:25 UTC; threat=malware_download; reporter=abuse_ch; 
+                        larted=true; takedown_time_seconds=150389; tags=System.Object[]}, @{id=121476; 
+                        urlhaus_reference=https://urlhaus.abuse.ch/url/121476/; 
+                        url=http://vektorex.com/source/Z/10874000.exe; url_status=offline; 
+                        date_added=2019-02-11 11:00:07 UTC; threat=malware_download; reporter=oppimaniac; 
+                        larted=true; takedown_time_seconds=14832; tags=System.Object[]}...}
+.EXAMPLE
+
+    Get-UrlHausData -Payload -SHA256 "01fa56184fcaa42b6ee1882787a34098c79898c182814774fd81dc18a6af0b00" 
+
+    query_status     : ok
+    md5_hash         : 12c8aec5766ac3e6f26f2505e2f4a8f2
+    sha256_hash      : 01fa56184fcaa42b6ee1882787a34098c79898c182814774fd81dc18a6af0b00
+    file_type        : doc
+    file_size        : 174928
+    signature        : Heodo
+    firstseen        : 2019-01-19 01:27:04
+    lastseen         : 2019-01-19 02:11:26
+    url_count        : 138
+    urlhaus_download : https://urlhaus-api.abuse.ch/v1/download/01fa56184fcaa42b6ee1882787a34098c79898c18281477
+                       4fd81dc18a6af0b00/
+    virustotal       : 
+    imphash          : 
+    ssdeep           : 
+    tlsh             : 
+    urls             : {@{url_id=105822; url=http://nouslesentrepreneurs.fr/yIwTQ-iTd_eumU-vL/COMET/SIGNS/PAYME
 
 
 
+
+    The above command retrieves payload information based on the specified SHA256 hash value
 #>
 
   [CmdletBinding()]
   Param(
-    # Recent URLs
+    # lists Recently added URLs
     [Parameter(Mandatory=$true,
                    ParameterSetName='URL',
                    ValueFromPipelineByPropertyName=$true,
                    Position=0)]
     [switch]$URL,
 
-    # Recent Payloads
+    # lists Recently added Payloads
     [Parameter(Mandatory=$true,
                    ParameterSetName='Payload',
                    ValueFromPipelineByPropertyName=$true,
                    Position=0)]
-
     [switch]$Payload,
 
-    # URL Information
+    # The MD5 hash of the payload
+    [Parameter(Mandatory=$false,
+                   ParameterSetName='Payload',
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+    [ValidateNotNull()]
+    [string]$MD5,
+    # The sha256 hash of the payload
+    [Parameter(Mandatory=$false,
+                   ParameterSetName='Payload',
+                   ValueFromPipelineByPropertyName=$true,
+                   Position=0)]
+    [ValidateNotNull()]
+    [string]$SHA256,
+    
+    # The URL to lookup for information
     [Parameter(Mandatory=$true,
                    ParameterSetName='URLINFO',
                    ValueFromPipelineByPropertyName=$true,
@@ -170,21 +229,20 @@ Function Get-UrlHausData{
     [ValidateNotNull()]
     [string]$URLINFO,
 
-    # Host Information
+    # the Hostname to lookup for Information
     [Parameter(Mandatory=$true,
-                   ParameterSetName='URLINFO',
+                   ParameterSetName='Hostname',
                    ValueFromPipelineByPropertyName=$true,
                    Position=0)]
     [ValidateNotNull()]
-    [string]$Host,
-
-
-    # Number of minutes to use the cached content before updating
+    [string]$Hostname,
+    
+    # Number of minutes to use the cached content before getting live API data
     [Parameter(Mandatory=$false,
                    ValueFromPipelineByPropertyName=$true,
                    Position=0)]
     [int]$CacheMinutes,
-    # Ignore Cache
+    # Ignore Cache, allways pull live API data
     [Parameter(Mandatory=$false,
                    ValueFromPipelineByPropertyName=$true,
                    Position=0)]
@@ -192,6 +250,13 @@ Function Get-UrlHausData{
   )
 
 Begin{
+
+        # Set default caching time for API calls
+        If(-not($CacheMinutes))
+        {
+            $CacheMinutes = 15
+        }
+
 
         If ($PSBoundParameters.Keys.Contains("URL"))
         {
@@ -202,11 +267,33 @@ Begin{
         }
         Elseif($PSBoundParameters.Keys.Contains("Payload"))
         {
-            write-verbose "Payload parameter selected"
-            $Endpoint = "payloads/recent/"
-            $outputvalue = "payloads"
-            $method = "Get"
+            If($PSBoundParameters.Keys.Contains("MD5"))
+            {
+                write-verbose "Payload parameter with MD5 selected"
+                $Endpoint = "payload"
+                $outputvalue = "" # not required
+                $method = "Post"
+                $body = @{md5_hash = $MD5}
+                $NoCache = $true
+            }
+            Elseif($PSBoundParameters.Keys.Contains("SHA256"))
+            {
+                write-verbose "Payload parameter with SHA256 selected"
+                $Endpoint = "payload"
+                $outputvalue = "" # not required
+                $method = "Post"
+                $body = @{sha256_hash = $SHA256}
+                $NoCache = $true
+            
+            }
+            Else{
+                write-verbose "Payload parameter selected"
+                $Endpoint = "payloads/recent"
+                $outputvalue = "payloads"
+                $method = "Get"
+            }
         }
+
         ElseIf($PSBoundParameters.Keys.Contains("URLINFO"))
         {
             write-verbose "URL Info parameter selected"
@@ -214,14 +301,16 @@ Begin{
             $outputvalue = 'urlinfo'
             $method = "Post"
             $body = @{url = $URLINFO}
+            $NoCache = $true
         }
-        ElseIf($PSBoundParameters.Keys.Contains("Host"))
+        ElseIf($PSBoundParameters.Keys.Contains("Hostname"))
         {
             write-verbose "Host Info parameter selected"
             $Endpoint = "host"
             $outputvalue = 'host'
             $method = "Post"
-            $body = @{host = $host}
+            $body = @{host = $hostname}
+            $NoCache = $true
         }
 
         Else{
@@ -247,17 +336,17 @@ Begin{
 Process{
         If ($NoCache)
         {
+            Write-Verbose "Clearing cache data"
             Remove-Variable -Name LastCacheDate -Scope Global -ErrorAction SilentlyContinue
             Remove-Variable -Name resultcache -Scope Global -ErrorAction SilentlyContinue
 
             Write-verbose "Not using cache retrieving live data"
             Try{
                 $global:resultcache = @(Invoke-RestMethod -Uri $Uri -Method $method -TimeoutSec $global:Timeout -UserAgent $global:UserAgent -Body $body) 
-                
                 If ($global:resultcache.query_status -eq "ok")
                 {
                     $global:LastCacheDate = Get-date
-                    If($Endpoint -eq "URL")
+                    If($Endpoint -eq "URL" -or $Endpoint -eq "Host" -or $Endpoint -eq "payload")
                     {
                         $global:resultcache
                     }
@@ -266,10 +355,15 @@ Process{
                         $global:resultcache.$outputvalue
                     }
                 }
-                Elseif($global:resultcache.querystatus -eq "no_results")
+                Elseif($global:resultcache.query_status -eq "no_results")
                     {
                         Write-Warning "The query yield no results"
                         break
+                    }
+                    Elseif($global:resultcache.query_status -eq "invalid_sha256_hash")
+                    {
+                        Write-Warning "invalid sha256 hash"
+                        Break
                     }
                     Else
                     {
@@ -285,7 +379,8 @@ Process{
         }
         Else
         {
-                If($global:LastCacheDate -eq $null)
+
+                If($null -eq $global:LastCacheDate)
                 {
                     $global:LastCacheDate = Get-date
                 }
@@ -300,7 +395,14 @@ Process{
                 If ($CacheDifference -lt $CacheMinutes)
                 {
                     Write-verbose "Data cache age: $CacheDifference, using cached data"
-                    $global:resultcache.$outputvalue
+                    If($Endpoint -eq "URL" -or $Endpoint -eq "Host" -or $Endpoint -eq "payload")
+                    {
+                        $global:resultcache
+                    }
+                    Else
+                    {
+                        $global:resultcache.$outputvalue
+                    }
                 }
                 Else
                 {
@@ -311,7 +413,7 @@ Process{
                         {
                             $global:LastCacheDate = Get-date
 
-                            If($Endpoint -eq "URL")
+                            If($Endpoint -eq "URL" -or $Endpoint -eq "Host" -or $Endpoint -eq "payload")
                             {
                                 $global:resultcache
                             }
@@ -320,13 +422,19 @@ Process{
                                 $global:resultcache.$outputvalue
                             }
                         }
-                        Elseif($global:resultcache.querystatus -eq "no_results")
+                        Elseif($global:resultcache.query_status -eq "no_results")
                         {
                             Write-Warning "The query yield no results"
                             break
                         }
+                        Elseif($global:resultcache.query_status -eq "invalid_sha256_hash")
+                        {
+                            Write-Warning "invalid sha256 hash"
+                            Break
+                        }
                         Else
                         {
+
                             Write-Error "unknown response"
                             break
                         }
