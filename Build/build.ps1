@@ -43,16 +43,16 @@ $TestManifest = Test-ModuleManifest -Path "$($ModuleManifest.FullName)"
 #Install-Module -Name PSScriptAnalyzer -force -Scope CurrentUser
 #Invoke-ScriptAnalyzer -Path "$ModuleSourceDir"
 
-## Publish Local Module Local
+## Publish  Module into local repository
 Write-host  "Publishing Module into local repository" -ForegroundColor Green
-Publish-Module -Path "C:\dev\PSURLhaus\PSUrlhaus" -Repository "LocalPSRepository" -Verbose
+Publish-Module -Path "$ModuleSourceDir" -Repository "LocalPSRepository" -Verbose
 
 ## Install Module from local Repository
 Write-Host "Installing module " -ForegroundColor Green
 Find-module -Name "PSURLhaus" -Repository "LocalPSRepository" | Install-Module -Scope CurrentUser -Force
 
 Write-host  "Publishing Module into PSGallery" -ForegroundColor Green
-Publish-Module -Path "C:\dev\PSURLhaus\PSUrlhaus" -NuGetApiKey <my PSGallery API key> -Verbose 
+#Publish-Module -Path "$ModuleSourceDir" -NuGetApiKey  -Verbose 
 
 
 

@@ -2,6 +2,7 @@ Function Get-UrlHausData{
 <#
 .Synopsis
    Get-UrlHausData
+
 .DESCRIPTION
    Get-UrlHausData retrieves open source threat intelligence data from URLhaus
 
@@ -14,46 +15,41 @@ Function Get-UrlHausData{
    Signature Information
 
    Please note that the API will return a list of recent additions made in the past 3 days, but will return maximal 1000 entries.
-   
    For more information about the URLhaus API see https://urlhaus-api.abuse.ch
 
-.PARAMETER URL
+.PARAMETER Url
+Retrieve a list of recent URLs (recent additions made to URLhaus), 
+Detailed information about the response data can be found here: https://urlhaus-api.abuse.ch/#urls-recent
 
- Retrieve a list of recent URLs (recent additions made to URLhaus), 
- 
- Detailed information about the response data can be found here: https://urlhaus-api.abuse.ch/#urls-recent
- 
-.PARAMETR Payload
+.PARAMETER Payload
+
  Retrieve a list of recent payloads (recent payloads seen by URLhaus), 
-
  Detailed information about the response data can be found here: https://urlhaus-api.abuse.ch/#payloads-recent
 
 .PARAMETER MD5
+
  Use with parameter Payload. The MD5 hash of the payload (malware sample) you want to query URLhaus for
-
  Detailed information about the response data can be found herE: https://urlhaus-api.abuse.ch/#payloadinfo
 
-.PARAMETER SHA256
+ .PARAMETER SHA256
+
  Use with parameter Payload. The SHA256 hash of the payload (malware sample) you want to query URLhaus for
-
  Detailed information about the response data can be found herE: https://urlhaus-api.abuse.ch/#payloadinfo
- 
 
-.PARAMETER URLINFO 
+ .PARAMETER URLINFO
+
  The URL to check against the URLhaus database. 
 
  Retrieves information about an URL
-
  Detailed information about the response data can be found here: https://urlhaus-api.abuse.ch/#urlinfo
 
-
 .PARAMETER Hostname
- The host (IPv4 address, hostname or domain name) to query aainst the URLhaus database
- 
+
+  The host (IPv4 address, hostname or domain name) to query aainst the URLhaus database
   Detailed information about the response data can be found here: https://urlhaus-api.abuse.ch/#hostinfo
-  
 
 .PARAMETER CacheMinutes
+
  Use with parameter URL or Payload.  To prevent unecessary stress for the online URLhaus API, this parameter
  defines the time previously retrieved data from the same API endpoint remains cached
  utnil the data is fetched from the live API again. Th default is 15 minutes. If you do not wish to 
@@ -68,14 +64,17 @@ Function Get-UrlHausData{
   Get-URLhausdata -URL (the cache now contains the payload data, so URL data must be fetched online again)
 
 .PARAMETER NoCache
+ 
  Use this switch to send every request to the online API, otherwise previously retrieved data within 
  the current session is used for 15 minutes (default) or as long as specified by the CacheMinutes parameter. 
 
-
 .NOTES
-    v1.0, 22.03.2020, Alex Verboon
-
+    v0.1.0, 22.03.2020, Alex Verboon
+    v0.2.0, 24.03.2020, Alex Verboon, fixed a condition where the function would not work properly when invoking 
+                                      the script in a foreach loop. 
+                                      fixed cmdlet help
 .EXAMPLE
+
     Get-UrlHausData -URL
 
     id                : 328248
@@ -91,9 +90,9 @@ Function Get-UrlHausData{
     tags              : {mirai}
 
    Retrieves the most recent (1000) URL additions made to URLhaus
-   
 
 .EXAMPLE
+
     Get-UrlHausData -Payload 
 
     md5_hash         : 508a488117f7379a06f4839c79078c31
@@ -111,9 +110,9 @@ Function Get-UrlHausData{
 
    Retrieves the most recent (1000) Payload additions made to URLhaus
 
-.EXMAPLE
+.EXAMPLE 
 
-    Get-UrlHausData -URLINFO "http://sskymedia.com/VMYB-ht_JAQo-gi/INV/99401FORPO/20673114777/US/Outstanding-Invoices/"
+  Get-UrlHausData -URLINFO "http://sskymedia.com/VMYB-ht_JAQo-gi/INV/99401FORPO/20673114777/US/Outstanding-Invoices/"
 
     query_status          : ok
     id                    : 105821
@@ -137,9 +136,36 @@ Function Get-UrlHausData{
                             ssdeep=; tlsh=}, @{firstseen=2019-01-19; filename=PAY845086736936754.doc; 
                             file_type=doc; response_size=177744; 
                            ...}
+
+
+
 .EXAMPLE
 
- Get-UrlHausData -Hostname vektorex.com 
+    Get-UrlHausData -Payload -SHA256 "01fa56184fcaa42b6ee1882787a34098c79898c182814774fd81dc18a6af0b00" 
+
+    query_status     : ok
+    md5_hash         : 12c8aec5766ac3e6f26f2505e2f4a8f2
+    sha256_hash      : 01fa56184fcaa42b6ee1882787a34098c79898c182814774fd81dc18a6af0b00
+    file_type        : doc
+    file_size        : 174928
+    signature        : Heodo
+    firstseen        : 2019-01-19 01:27:04
+    lastseen         : 2019-01-19 02:11:26
+    url_count        : 138
+    urlhaus_download : https://urlhaus-api.abuse.ch/v1/download/01fa56184fcaa42b6ee1882787a34098c79898c18281477
+                       4fd81dc18a6af0b00/
+    virustotal       : 
+    imphash          : 
+    ssdeep           : 
+    tlsh             : 
+    urls             : {@{url_id=105822; url=http://nouslesentrepreneurs.fr/yIwTQ-iTd_eumU-vL/COMET/SIGNS/PAYME
+
+    The above command retrieves payload information based on the specified SHA256 hash value
+
+
+.EXAMPLE
+
+    Get-UrlHausData -Hostname vektorex.com 
 
     query_status      : ok
     urlhaus_reference : https://urlhaus.abuse.ch/host/vektorex.com/
@@ -163,31 +189,6 @@ Function Get-UrlHausData{
                         url=http://vektorex.com/source/Z/10874000.exe; url_status=offline; 
                         date_added=2019-02-11 11:00:07 UTC; threat=malware_download; reporter=oppimaniac; 
                         larted=true; takedown_time_seconds=14832; tags=System.Object[]}...}
-.EXAMPLE
-
-    Get-UrlHausData -Payload -SHA256 "01fa56184fcaa42b6ee1882787a34098c79898c182814774fd81dc18a6af0b00" 
-
-    query_status     : ok
-    md5_hash         : 12c8aec5766ac3e6f26f2505e2f4a8f2
-    sha256_hash      : 01fa56184fcaa42b6ee1882787a34098c79898c182814774fd81dc18a6af0b00
-    file_type        : doc
-    file_size        : 174928
-    signature        : Heodo
-    firstseen        : 2019-01-19 01:27:04
-    lastseen         : 2019-01-19 02:11:26
-    url_count        : 138
-    urlhaus_download : https://urlhaus-api.abuse.ch/v1/download/01fa56184fcaa42b6ee1882787a34098c79898c18281477
-                       4fd81dc18a6af0b00/
-    virustotal       : 
-    imphash          : 
-    ssdeep           : 
-    tlsh             : 
-    urls             : {@{url_id=105822; url=http://nouslesentrepreneurs.fr/yIwTQ-iTd_eumU-vL/COMET/SIGNS/PAYME
-
-
-
-
-    The above command retrieves payload information based on the specified SHA256 hash value
 #>
 
   [CmdletBinding()]
@@ -358,17 +359,17 @@ Process{
                 Elseif($global:resultcache.query_status -eq "no_results")
                     {
                         Write-Warning "The query yield no results"
-                        break
+                        #break
                     }
                     Elseif($global:resultcache.query_status -eq "invalid_sha256_hash")
                     {
                         Write-Warning "invalid sha256 hash"
-                        Break
+                        #Break
                     }
                     Else
                     {
                         Write-Error "unknown response"
-                        break
+                        #break
                     }
              }
             
@@ -425,18 +426,18 @@ Process{
                         Elseif($global:resultcache.query_status -eq "no_results")
                         {
                             Write-Warning "The query yield no results"
-                            break
+                            #break
                         }
                         Elseif($global:resultcache.query_status -eq "invalid_sha256_hash")
                         {
                             Write-Warning "invalid sha256 hash"
-                            Break
+                            #Break
                         }
                         Else
                         {
 
                             Write-Error "unknown response"
-                            break
+                            #break
                         }
                     }
                     Catch{
