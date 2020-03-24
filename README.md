@@ -7,7 +7,7 @@ This module provides you with easy-to-use cmdlets to make it easy to interface w
 
 Please also read the [Terms of Services](https://urlhaus-api.abuse.ch/#tos) published by URLhaus
 
-Just in case you didn't read the TOS from URLhaus: URLhaus can not be held liable for any false positive or damage caused by the use of the website or the datasets offered throgh their API, the same applies for the creator of this powershell module
+Just in case you didn't read the TOS from URLhaus: URLhaus can not be held liable for any false positive or damage caused by the use of the website or the datasets offered through their API, the same applies for the creator of this powershell module
 
 ## Perequisites
 
@@ -21,7 +21,7 @@ To get started with the module, open your PowerShell terminal as an administrato
 Install-Module "PSURLhaus"
 ```
 
-or if you don't have or wish to use administrator giths, use the following command to install the module in your personal powershell profile.
+or if you don't have or wish to use administrator rights, use the following command to install the module in your personal powershell profile.
 
 ```powershell
 Install-Module "PSURLhaus" -Scope CurrentUser
@@ -63,13 +63,13 @@ Get-UrlHausData -Payload -SHA256 5f31742eeb4a01b03f84741a768a2686e8f0cf7e12bbe8e
 Get-UrlHausData -URLINFO "http://sskymedia.com/VMYB-ht_JAQo-gi/INV/99401FORPO/20673114777/US/Outstanding-Invoices/
 ```
 
-**Hostname** - The host (IPv4 address, hostname or domain name) to query aainst the URLhaus database
+**Hostname** - The host (IPv4 address, hostname or domain name) to query against the URLhaus database
 
  ```powershell
 Get-UrlHausData -Hostname 'vektorex.com
 ```
 
-**CacheMinutes** - Use with parameter **URL** or **Payload**.  To prevent unecessary stress for the online URLhaus API, this parameter  defines the time previously retrieved data from the same API endpoint remains cached  utnil the data is fetched from the live API again. Th default is 15 minutes. If you do not wish to  use the cache use the **-NoCache** option
+**CacheMinutes** - Use with parameter **URL** or **Payload**.  To prevent unnecessary stress for the online URLhaus API, this parameter  defines the time previously retrieved data from the same API endpoint remains cached  until the data is fetched from the live API again. Th default is 15 minutes. If you do not wish to  use the cache use the **-NoCache** option
 
 **NoCache** - Use with parameter **URL** or **Payload**. Use this switch to send every request to the online API, otherwise previously retrieved data within the current session is used for 15 minutes (default) or as long as specified by the CacheMinutes parameter
 
