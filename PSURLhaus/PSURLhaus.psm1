@@ -73,6 +73,7 @@ Detailed information about the response data can be found here: https://urlhaus-
     v0.2.0, 24.03.2020, Alex Verboon, fixed a condition where the function would not work properly when invoking 
                                       the script in a foreach loop. 
                                       fixed cmdlet help
+    v0.3.0, 08.04.2020, Alex Verboon, minor fixes
 .EXAMPLE
 
     Get-UrlHausData -URL
@@ -196,28 +197,24 @@ Detailed information about the response data can be found here: https://urlhaus-
     # lists Recently added URLs
     [Parameter(Mandatory=$true,
                    ParameterSetName='URL',
-                   ValueFromPipelineByPropertyName=$true,
                    Position=0)]
     [switch]$URL,
 
     # lists Recently added Payloads
     [Parameter(Mandatory=$true,
                    ParameterSetName='Payload',
-                   ValueFromPipelineByPropertyName=$true,
                    Position=0)]
     [switch]$Payload,
 
     # The MD5 hash of the payload
     [Parameter(Mandatory=$false,
                    ParameterSetName='Payload',
-                   ValueFromPipelineByPropertyName=$true,
                    Position=0)]
     [ValidateNotNull()]
     [string]$MD5,
     # The sha256 hash of the payload
     [Parameter(Mandatory=$false,
                    ParameterSetName='Payload',
-                   ValueFromPipelineByPropertyName=$true,
                    Position=0)]
     [ValidateNotNull()]
     [string]$SHA256,
@@ -225,7 +222,6 @@ Detailed information about the response data can be found here: https://urlhaus-
     # The URL to lookup for information
     [Parameter(Mandatory=$true,
                    ParameterSetName='URLINFO',
-                   ValueFromPipelineByPropertyName=$true,
                    Position=0)]
     [ValidateNotNull()]
     [string]$URLINFO,
@@ -233,19 +229,16 @@ Detailed information about the response data can be found here: https://urlhaus-
     # the Hostname to lookup for Information
     [Parameter(Mandatory=$true,
                    ParameterSetName='Hostname',
-                   ValueFromPipelineByPropertyName=$true,
                    Position=0)]
     [ValidateNotNull()]
     [string]$Hostname,
     
     # Number of minutes to use the cached content before getting live API data
     [Parameter(Mandatory=$false,
-                   ValueFromPipelineByPropertyName=$true,
                    Position=0)]
     [int]$CacheMinutes,
     # Ignore Cache, allways pull live API data
     [Parameter(Mandatory=$false,
-                   ValueFromPipelineByPropertyName=$true,
                    Position=0)]
     [switch]$NoCache
   )
