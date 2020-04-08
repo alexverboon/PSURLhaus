@@ -52,7 +52,9 @@ Write-Host "Installing module " -ForegroundColor Green
 Find-module -Name "PSURLhaus" -Repository "LocalPSRepository" | Install-Module -Scope CurrentUser -Force
 
 Write-host  "Publishing Module into PSGallery" -ForegroundColor Green
-#Publish-Module -Path "$ModuleSourceDir" -NuGetApiKey  -Verbose 
+#Publish-Module -Path "$ModuleSourceDir" -NuGetApiKey <key>  -Verbose 
+
+
 
 
 
