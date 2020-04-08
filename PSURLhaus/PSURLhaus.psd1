@@ -101,7 +101,7 @@ PrivateData = @{
         # LicenseUri = ''
 
         # A URL to the main website for this project.
-        # ProjectUri = 'https://github.com/alexverboon/PSURLhaus'
+        ProjectUri = 'https://github.com/alexverboon/PSURLhaus'
 
         # A URL to an icon representing this module.
         # IconUri = ''
