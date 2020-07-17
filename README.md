@@ -1,3 +1,6 @@
+[![Minimum Supported PowerShell Version](https://img.shields.io/badge/PowerShell-5.1+-purple.svg)](https://github.com/PowerShell/PowerShell) ![Cross Platform](https://img.shields.io/badge/platform-windows-lightgrey)
+[![PowerShell Gallery Version](https://img.shields.io/powershellgallery/v/PSURLHAUS)](https://www.powershellgallery.com/packages/psurlhaus) [![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/PSURLHAUS)](https://www.powershellgallery.com/packages/psurlhaus)
+
 # PSURLhaus
 
 Welcome to the URLhaus PowerShell Module
@@ -67,6 +70,12 @@ Get-UrlHausData -URLINFO "http://sskymedia.com/VMYB-ht_JAQo-gi/INV/99401FORPO/20
 
  ```powershell
 Get-UrlHausData -Hostname 'vektorex.com
+```
+
+**Tag** - tag to search for
+
+ ```powershell
+Get-UrlHausData -Tag 'emotet'
 ```
 
 **CacheMinutes** - Use with parameter **URL** or **Payload**.  To prevent unnecessary stress for the online URLhaus API, this parameter  defines the time previously retrieved data from the same API endpoint remains cached  until the data is fetched from the live API again. Th default is 15 minutes. If you do not wish to  use the cache use the **-NoCache** option

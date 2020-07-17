@@ -48,6 +48,11 @@ Detailed information about the response data can be found here: https://urlhaus-
   The host (IPv4 address, hostname or domain name) to query aainst the URLhaus database
   Detailed information about the response data can be found here: https://urlhaus-api.abuse.ch/#hostinfo
 
+.PARAMETER Tag
+
+ Search URLhaus database for entries with the specified tag
+
+
 .PARAMETER CacheMinutes
 
  Use with parameter URL or Payload.  To prevent unecessary stress for the online URLhaus API, this parameter
@@ -74,6 +79,7 @@ Detailed information about the response data can be found here: https://urlhaus-
                                       the script in a foreach loop. 
                                       fixed cmdlet help
     v0.3.0, 08.04.2020, Alex Verboon, minor fixes
+    v0.4.0, 17.07.2020, Alex Verboon, added option to search for tags
 .EXAMPLE
 
     Get-UrlHausData -URL
@@ -190,6 +196,11 @@ Detailed information about the response data can be found here: https://urlhaus-
                         url=http://vektorex.com/source/Z/10874000.exe; url_status=offline; 
                         date_added=2019-02-11 11:00:07 UTC; threat=malware_download; reporter=oppimaniac; 
                         larted=true; takedown_time_seconds=14832; tags=System.Object[]}...}
+.EXAMPLE
+    get-UrlHausData -Tag Emotet
+
+    The above command retrieves payload information based on the specified tag value
+     
 #>
 
   [CmdletBinding()]
@@ -232,6 +243,13 @@ Detailed information about the response data can be found here: https://urlhaus-
                    Position=0)]
     [ValidateNotNull()]
     [string]$Hostname,
+
+    # search for entries by tag
+    [Parameter(Mandatory=$true,
+                   ParameterSetName='tag',
+                   Position=0)]
+    [ValidateNotNull()]
+    [string]$Tag,
     
     # Number of minutes to use the cached content before getting live API data
     [Parameter(Mandatory=$false,
@@ -278,7 +296,6 @@ Begin{
                 $method = "Post"
                 $body = @{sha256_hash = $SHA256}
                 $NoCache = $true
-            
             }
             Else{
                 write-verbose "Payload parameter selected"
@@ -287,7 +304,6 @@ Begin{
                 $method = "Get"
             }
         }
-
         ElseIf($PSBoundParameters.Keys.Contains("URLINFO"))
         {
             write-verbose "URL Info parameter selected"
@@ -306,7 +322,15 @@ Begin{
             $body = @{host = $hostname}
             $NoCache = $true
         }
-
+        ElseIf($PSBoundParameters.Keys.Contains("Tag"))
+        {
+            Write-Verbose "Tag parameter selected"
+            $Endpoint = "tag"
+            $outputvalue = 'urls'
+            $method = "Post"
+            $body = @{tag = $tag}
+            $NoCache = $true
+        }
         Else{
             Write-Error "Unknown Parameter"
             Break

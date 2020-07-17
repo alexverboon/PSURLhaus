@@ -1,5 +1,5 @@
 ﻿# URL Data 
-$url = Get-UrlHausData -URL
+$url = Get-UrlHausData -URL -NoCache
 $urlcount = $url.Count
 $urlcount
 $url = Get-UrlHausData -URL -Verbose 
@@ -7,7 +7,7 @@ $url = Get-UrlHausData -URL -CacheMinutes 2 -Verbose
 $url = Get-UrlHausData -URL -NoCache -Verbose
 
 # Payload
-$payl = Get-UrlHausData -Payload
+$payl = Get-UrlHausData -Payload -NoCache
 $paylcount = $payl.Count
 $paylcount
 $payl = Get-UrlHausData -Payload -Verbose
@@ -44,3 +44,8 @@ $hostinfocount
 $hostinfo = @(Get-UrlHausData -Hostname vektorex.com -Verbose)
 $hostinfo = @(Get-UrlHausData -Hostname vektorex.com -CacheMinutes 2 -Verbose)
 $hostinfo = @(Get-UrlHausData -Hostname vektorex.com -NoCache -Verbose)
+
+#Tag info
+$taginfo = @(Get-UrlHausData -Tag "PowerShell")
+$taginfo.count
+
